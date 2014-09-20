@@ -7,7 +7,7 @@ I've created this version due to classloading issues with Hazelcast and jboss mo
 
 Tested with Jboss EAP 6.x and Wildfly 8.0.0
 
-To see it in action start jboss/wildfly in domain mode and deploy the application to tree servers, the Clustered bean should
+To see it in action start jboss/wildfly in domain mode and deploy the application on multiple nodes, the Clustered bean should
 be instantiated only the first time and must share its state between cluster nodes.
 
 I've made a video you can watch it here:https://www.youtube.com/watch?v=dwT6_mhoEyg
