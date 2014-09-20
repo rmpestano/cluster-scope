@@ -1,6 +1,6 @@
 = CDI Cluster Scope based on Infinispan
 
-]All credits to *Romain Manni-Bucau* Hazelcast https://github.com/rmannibucau/cluster-scope[cluster scope version].
+All credits to *Romain Manni-Bucau* Hazelcast https://github.com/rmannibucau/cluster-scope[cluster scope version].
  
 
 I've created this version due to classloading issues with Hazelcast and jboss modules.
