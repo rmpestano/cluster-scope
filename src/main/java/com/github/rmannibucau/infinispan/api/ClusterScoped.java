@@ -1,4 +1,4 @@
-package com.github.rmannibucau.hazelcast.api;
+package com.github.rmannibucau.infinispan.api;
 
 import javax.enterprise.context.NormalScope;
 import java.lang.annotation.Documented;
