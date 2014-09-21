@@ -1,13 +1,18 @@
 package com.github.rmannibucau.infinispan.internal;
 
 import com.github.rmannibucau.infinispan.api.ClusterScoped;
+import org.apache.commons.proxy2.Interceptor;
+import org.apache.commons.proxy2.Invocation;
+import org.apache.commons.proxy2.asm.ASMProxyFactory;
 import org.infinispan.Cache;
 
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.PassivationCapable;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -30,8 +35,7 @@ public class ClusterContext implements Context {
         if (contextualInstanceInfo == null) {
             return null;
         }
-        infini.getInfinispanStorage().replace(getBeanKey(bean).toString(), contextualInstanceInfo);
-        return contextualInstanceInfo.getContextualInstance();
+        return proxy((T) contextualInstanceInfo.getContextualInstance(), getBeanKey(bean), contextualInstanceInfo);
     }
 
     @Override
@@ -62,6 +66,29 @@ public class ClusterContext implements Context {
         }
         infini.getInfinispanStorage().put(getBeanKey(bean).toString(), instanceInfo);
         return instance;
+    }
+
+    private <T> T proxy(final T instance, final String beanKey, final ContextualInstanceInfo<T> instanceInfo) {
+        final ASMProxyFactory factory = new ASMProxyFactory();
+        return (T) factory.createInterceptorProxy(instance.getClass().getClassLoader(), instance, new Interceptor() {
+            @Override
+            public Object intercept(final Invocation invocation) throws Throwable {
+                if (Serializable.class == invocation.getMethod().getDeclaringClass()) {
+                    try {
+                        return invocation.getMethod().invoke(instance, invocation.getArguments());
+                    } catch (final InvocationTargetException ite) {
+                        throw ite.getCause();
+                    }
+                }
+                try {
+                    return invocation.proceed();
+                } catch (final InvocationTargetException ite) {
+                    throw ite.getCause();
+                } finally {
+                    infini().getInfinispanStorage().put(beanKey, instanceInfo);
+                }
+            }
+        }, new Class<?>[] { instance.getClass(), Serializable.class });
     }
 
     private ClusterScopeExtension infini() {

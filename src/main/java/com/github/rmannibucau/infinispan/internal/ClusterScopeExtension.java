@@ -13,7 +13,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class ClusterScopeExtension implements Extension {
     private EmbeddedCacheManager instance;
@@ -43,7 +42,7 @@ public class ClusterScopeExtension implements Extension {
                     defaultClusteredBuilder().transport().
                     defaultTransport().addProperty("configurationFile", "jgroups-udp.xml").
                     build(), new ConfigurationBuilder().clustering().
-                    cacheMode(CacheMode.REPL_ASYNC).
+                    cacheMode(CacheMode.REPL_SYNC).
 //                    expiration().lifespan(30,TimeUnit.MINUTES).
                     build());
         }

@@ -36,6 +36,8 @@ public class ClusterBean implements Serializable {
         if (item != null) {
             getItens().add(item);
             item = null;
+        }    else{
+            log.info("null item");
         }
     }
 
