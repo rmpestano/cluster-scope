@@ -4,6 +4,9 @@ import com.github.rmannibucau.infinispan.api.ClusterScoped;
 import org.jboss.logging.Logger;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,35 +20,46 @@ import java.util.List;
 @ClusterScoped
 public class ClusterBean implements Serializable {
 
-    private List<String> itens;
-    private String item;
+    private List<Person> persons;
+    private String name;
     private Logger log = Logger.getLogger(ClusterBean.class.getName());
+
+    @Inject
+    Event<SimpleEvent> event;
 
     @PostConstruct
     public void init() {
         log.info("init cluster bean");//should be called only first time, others nodes will get instance from the first node accessing this bean
         log.info("cache miss");
-        itens = new ArrayList<>();
+        persons = new ArrayList<>();
     }
 
-    public List<String> getItens() {
-        return itens;
+    public List<Person> getPersons() {
+        return persons;
     }
 
-    public void addItem() {
-        if (item != null) {
-            getItens().add(item);
-            item = null;
-        }    else{
+    public void addPerson() {
+        if (name != null) {
+            Person p = new Person(name);
+            if (!persons.contains(p)) {
+                getPersons().add(p);
+                event.fire(new SimpleEvent(name));
+            }
+            name = null;
+        } else {
             log.info("null item");
         }
     }
 
-    public String getItem() {
-        return item;
+    public String getName() {
+        return name;
     }
 
-    public void setItem(String item) {
-        this.item = item;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void observe(@Observes SimpleEvent simpleEvent) throws InterruptedException {
+        persons.add(simpleEvent.getPerson());
     }
 }

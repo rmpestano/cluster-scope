@@ -11,19 +11,19 @@
 </h:head>
 <h:body>
     <h:form prependId="false">
-        <h:panelGroup id="item">
-            <h:inputText value="#{clusterBean.item}"/>
-            <h:commandButton value="Add item" action="#{clusterBean.addItem}">
-                      <f:ajax execute="item" render="itens"/>
+        <h:panelGroup id="person">
+            <h:inputText value="#{clusterBean.name}"/>
+            <h:commandButton value="Add Person" action="#{clusterBean.addPerson}">
+                      <f:ajax execute="person" render="persons"/>
             </h:commandButton>
 
         </h:panelGroup>
         <hr/>
-        <h:panelGroup layout="block" id="itens">
-            <ui:repeat value="#{clusterBean.itens}" var="i">
+        <h:panelGroup layout="block" id="persons">
+            <ui:repeat value="#{clusterBean.persons}" var="p">
                 <ul>
                     <li>
-                        <h:outputText value="#{i}"/>
+                        <h:outputText value="#{p}"/>
                     </li>
                 </ul>
             </ui:repeat>
