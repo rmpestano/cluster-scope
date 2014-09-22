@@ -6,6 +6,20 @@ All credits to *Romain Manni-Bucau* Hazelcast https://github.com/rmannibucau/clu
 I've created this version due to classloading issues with Hazelcast and jboss modules.
 
 Tested with Jboss EAP 6.x and Wildfly 8.0.0
+[NOTE]
+====
+you need to enable infinispan module in WEB-INF/jboss-deployment-structure.xml:
+[source,xml]
+----
+<jboss-deployment-structure>
+	<deployment>
+		<dependencies>
+			<module name="org.infinispan" export="true" />
+		</dependencies>
+	</deployment>
+</jboss-deployment-structure>
+----
+====
 
 To see it in action start jboss/wildfly in domain mode and deploy the application on multiple nodes, the Clustered bean should
 be instantiated only the first time and must share its state between cluster nodes.
