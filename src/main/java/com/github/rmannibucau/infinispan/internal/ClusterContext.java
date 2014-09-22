@@ -68,6 +68,9 @@ public class ClusterContext implements Context {
         return instance;
     }
 
+    /**
+     * save state on every invocation
+     */
     private <T> T proxy(final T instance, final String beanKey, final ContextualInstanceInfo<T> instanceInfo) {
         final ASMProxyFactory factory = new ASMProxyFactory();
         return (T) factory.createInterceptorProxy(instance.getClass().getClassLoader(), instance, new Interceptor() {
