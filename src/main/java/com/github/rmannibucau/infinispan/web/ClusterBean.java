@@ -8,6 +8,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ public class ClusterBean implements Serializable {
     private String name;
     private Logger log = Logger.getLogger(ClusterBean.class.getName());
 
+    //@Inject
+    //transient PersonService personService; //see https://github.com/rmpestano/cluster-scope/issues/1
+
     @Inject
     Event<SimpleEvent> event;
 
@@ -31,6 +35,7 @@ public class ClusterBean implements Serializable {
     public void init() {
         log.info("init cluster bean");//should be called only first time, others nodes will get instance from the first node accessing this bean
         log.info("cache miss");
+        //persons = personService.list();
         persons = new ArrayList<>();
     }
 
@@ -38,11 +43,12 @@ public class ClusterBean implements Serializable {
         return persons;
     }
 
-    public void addPerson() {
+    public void addPerson() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         if (name != null) {
             Person p = new Person(name);
             if (!persons.contains(p)) {
-                getPersons().add(p);
+                //personService.save(p);
+                persons.add(p);
                 event.fire(new SimpleEvent(name));
             }
             name = null;
