@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class ClusterBean implements Serializable {
         return persons;
     }
 
-    public void addPerson() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public void addPerson()  {
         if (name != null) {
             Person p = new Person(name);
             if (!persons.contains(p)) {
