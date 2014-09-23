@@ -8,6 +8,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,9 +26,12 @@ public class ClusterBean implements Serializable {
     private List<Person> persons;
     private String name;
     private Logger log = Logger.getLogger(ClusterBean.class.getName());
+    @PersistenceContext
+    EntityManager em; //no issues
 
     //@Inject
-    //transient PersonService personService; //see https://github.com/rmpestano/cluster-scope/issues/1
+    //PersonService personService; //see https://github.com/rmpestano/cluster-scope/issues/1
+
 
     @Inject
     Event<SimpleEvent> event;
@@ -35,8 +40,10 @@ public class ClusterBean implements Serializable {
     public void init() {
         log.info("init cluster bean");//should be called only first time, others nodes will get instance from the first node accessing this bean
         log.info("cache miss");
+        //personService = BeanManagerController.getBeanByType(PersonService.class); //also doesnt work
         //persons = personService.list();
         persons = new ArrayList<>();
+
     }
 
     public List<Person> getPersons() {
